@@ -13,6 +13,6 @@ function FilterDropdown({ filterType, setFilterType }) {
             <option value="episode">Episodes</option>
         </select>
     );
-}
+} 
 
 export default FilterDropdown;
