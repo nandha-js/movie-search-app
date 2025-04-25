@@ -1,21 +1,41 @@
-import React from 'react';
+import { useState, useEffect } from 'react';
+import { FaHeart, FaRegHeart } from 'react-icons/fa';
 
 function FavoriteButton({ movie }) {
-    const addToFavorites = () => {
-        const favorites = JSON.parse(localStorage.getItem('favorites')) || [];
-        if (!favorites.find((fav) => fav.imdbID === movie.imdbID)) {
-            favorites.push(movie);
-            localStorage.setItem('favorites', JSON.stringify(favorites));
-            alert('Movie added to favorites!');
+    const [isFavorite, setIsFavorite] = useState(false);
+
+    useEffect(() => {
+        const storedFavorites = JSON.parse(localStorage.getItem('favorites')) || [];
+        const exists = storedFavorites.some((fav) => fav.imdbID === movie.imdbID);
+        setIsFavorite(exists);
+    }, [movie.imdbID]);
+
+    const toggleFavorite = () => {
+        let storedFavorites = JSON.parse(localStorage.getItem('favorites')) || [];
+
+        if (isFavorite) {
+            // Remove from favorites
+            storedFavorites = storedFavorites.filter((fav) => fav.imdbID !== movie.imdbID);
+            setIsFavorite(false);
+            alert('Removed from favorites');
+        } else {
+            // Add to favorites
+            storedFavorites.push(movie);
+            setIsFavorite(true);
+            alert('Added to favorites');
         }
+
+        localStorage.setItem('favorites', JSON.stringify(storedFavorites));
     };
 
     return (
         <button
-            onClick={addToFavorites}
-            className="bg-blue-500 text-white py-2 px-4 rounded-full hover:bg-blue-700"
+            onClick={toggleFavorite}
+            className={`flex items-center gap-2 px-4 py-2 rounded-md shadow-md transition 
+                        ${isFavorite ? 'bg-red-600 text-white' : 'bg-gray-200 text-black hover:bg-red-500 hover:text-white'}`}
         >
-            Add to Favorites
+            {isFavorite ? <FaHeart /> : <FaRegHeart />}
+            {isFavorite ? 'Remove Favorite' : 'Add to Favorites'}
         </button>
     );
 }
